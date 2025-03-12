@@ -67,6 +67,7 @@
 				'with_front'			=> true,
 				'pages'					=> true,
 				'feeds'					=> true,
+				'ep_mask'				=> EP_PERMALINK,
 			);
 
 
@@ -80,7 +81,7 @@
 				'labels'				=> $labels,
 				'supports'				=> array('title', 'editor', 'author', 'thumbnail', 'excerpt', 'comments'),
 				'taxonomies'			=> array('route__locations', 'route__genres', 'route__collections', 'tickets', 'operators'),
-				'hierarchical'			=> true,
+				'hierarchical'			=> false,
 				'public'				=> true,
 				'show_ui'				=> true,
 				'show_in_menu'			=> true,

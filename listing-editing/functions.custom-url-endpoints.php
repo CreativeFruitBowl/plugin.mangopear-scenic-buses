@@ -47,6 +47,9 @@
 		array_push($vars, 'scenic-edit-view');
 
 
+		array_push($vars, 'scenic-route-page');
+
+
 		return $vars;
 	}
 
@@ -63,3 +66,13 @@
 	
 	add_filter('rewrite_rules_array', 'scenic_rewrites_edit_listings'); 	// [a]
 	add_filter('query_vars',          'scenic_query_vars_edit_listings'); 	// [b]
+
+
+	add_action('init', function(){
+		add_rewrite_endpoint('faqs',         EP_PERMALINK);
+		add_rewrite_endpoint('gallery',      EP_PERMALINK);
+		add_rewrite_endpoint('things-to-do', EP_PERMALINK);
+		add_rewrite_endpoint('timetable',    EP_PERMALINK);
+		add_rewrite_endpoint('map',          EP_PERMALINK);
+		add_rewrite_endpoint('tickets',      EP_PERMALINK);
+	});
