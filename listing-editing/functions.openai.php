@@ -156,3 +156,71 @@ function scenic_handle_ajax_scenic_openai_location_content() {
 
 
 add_action('wp_ajax_scenic_openai_location_content', 'scenic_handle_ajax_scenic_openai_location_content');
+
+
+
+
+
+/**
+ * [4]	Social media: Route post generation
+ */
+
+function scenic_handle_ajax_scenic_openai_route_socials() {
+	if (! wp_verify_nonce($_REQUEST['nonce'], 'scenic-global-nonce')) {												// [i]
+		wp_send_json_error('Security key could not be validated. Refresh the page and try again.', 500);			// [i]
+		exit;																										// [i]
+	}																												// [i]
+
+
+	if (! isset($_REQUEST)) :																						// [ii]
+		wp_send_json_error('There was no data sent with your request. Please try again.', 500);						// [ii]
+		exit;																										// [ii]
+	else :																											// [ii]
+		$openai_key = scenic_load_openai_client();																	// []
+		$open_ai = new Orhanerday\OpenAi\OpenAi($openai_key);														// []
+
+
+		$route_id    = intval($_REQUEST['routeID']);
+		$route_url   = get_permalink($route_id);
+		$route_name  = get_field('identifier--brand', $route_id);
+		$route_title = get_field('route-description--marketing', $route_id);
+
+
+		$prompt  = 'Give me a social media post idea based on this page: ' . $route_url . ' - a bus route called "' . $route_name . '" (' . $route_title . ')';
+		$prompt .= 'Don\'t give me a generic idea - I want a specific post that I can share on socials. Make the content in the post unique to the page I have referenced.';
+		$prompt .= 'Return the result as a HTML table. Do not add any extra text to the response other than the formatted table.';
+		$prompt .= 'Use sentence case for all content, you can include a few emojis.';
+		$prompt .= 'Use these as the column headers: Post title, Post content, Hashtags, Suggestion for image (text description).';
+
+
+		$json_response = $open_ai->chat([
+			'model' 			=> 'gpt-4o-mini',
+			'messages' 			=> array(
+				array(
+					'role'	  => 'user',
+					'content' => $prompt,
+				),
+			),
+			'n'					=> 8,
+			'temperature' 		=> 0.9,
+			'max_tokens' 		=> 275,
+			'frequency_penalty' => 0,
+			'presence_penalty' 	=> 0.6,
+		]);
+
+
+		$response = json_decode($json_response);
+
+
+		wp_send_json_success(																						// []
+			array(																									// []
+				'result'	=> $response,																			// []
+				'length'	=> $length,
+			),																										// []
+			200																										// []
+		);																											// []
+	endif;																											// [ii]
+}
+
+
+add_action('wp_ajax_scenic_openai_route_socials', 'scenic_handle_ajax_scenic_openai_route_socials');
