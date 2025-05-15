@@ -76,6 +76,7 @@
 		add_rewrite_endpoint('places-to-visit',  EP_PERMALINK);
 
 		add_rewrite_endpoint('faqs',             EP_PERMALINK);
+		add_rewrite_endpoint('reviews',          EP_PERMALINK);
 		add_rewrite_endpoint('timetable',        EP_PERMALINK);
 		add_rewrite_endpoint('tickets',          EP_PERMALINK);
 		add_rewrite_endpoint('map',              EP_PERMALINK);
