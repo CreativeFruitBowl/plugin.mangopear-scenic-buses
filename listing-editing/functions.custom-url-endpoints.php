@@ -80,4 +80,7 @@
 		add_rewrite_endpoint('timetable',        EP_PERMALINK);
 		add_rewrite_endpoint('tickets',          EP_PERMALINK);
 		add_rewrite_endpoint('map',              EP_PERMALINK);
+
+		add_rewrite_endpoint('help',             EP_PERMALINK);
+		add_rewrite_endpoint('getting-here',     EP_PERMALINK);
 	});
