@@ -40,9 +40,9 @@
 			 */
 			
 			$labels = array(
-				'name'					=> _x('Attractions',			'Post Type General Name', 	'scenic'),
-				'singular_name'			=> _x('Attraction',				'Post Type Singular Name',	'scenic'),
-				'menu_name'				=> __('Attractions',			'scenic'),
+				'name'					=> _x('Things to do',			'Post Type General Name', 	'scenic'),
+				'singular_name'			=> _x('Thing to do',			'Post Type Singular Name',	'scenic'),
+				'menu_name'				=> __('Things to do',			'scenic'),
 				'parent_item_colon'		=> __('Parent attraction:',		'scenic'),
 				'all_items'				=> __('All attractions',		'scenic'),
 				'view_item'				=> __('View attraction',		'scenic'),
