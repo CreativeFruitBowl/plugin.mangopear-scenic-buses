@@ -376,22 +376,22 @@ function scenic_handle_ajax_scenic_stock_api_add_to_library() {
 
 			switch ($request_type) :
 				case "addToLocation" :
-					$current_gallery = get_field('gallery', 'route__locations_' . $location_id);						// []	Get current gallery items
-					foreach ($current_gallery as $image) { $current_ids_only[] = $image['id']; }						// []	Loop through current gallery, fetching media ID and store to array
+					$current_gallery = get_field('gallery', $location_id);										// []	Get current gallery items
+					foreach ($current_gallery as $image) { $current_ids_only[] = $image['id']; }				// []	Loop through current gallery, fetching media ID and store to array
 
-					$new_media_ids = array_unique(array_merge($current_ids_only, $media_ids));							// []	Make sure the selected image isn't already in the gallery
-					foreach ($new_media_ids as $id) { $gallery_asset_ids[] = intval($id); }								// []	Build new array of media IDs
-					update_field('gallery', $gallery_asset_ids, 'route__locations_' . $location_id);					// []	Update field
+					$new_media_ids = array_unique(array_merge($current_ids_only, $media_ids));					// []	Make sure the selected image isn't already in the gallery
+					foreach ($new_media_ids as $id) { $gallery_asset_ids[] = intval($id); }						// []	Build new array of media IDs
+					update_field('gallery', $gallery_asset_ids, $location_id);									// []	Update field
 					break;
 
 
 				case "addToAttraction" :
-					$current_gallery = get_field('gallery', $attraction_id);											// []	Get current gallery items
-					foreach ($current_gallery as $image) { $current_ids_only[] = $image['id']; }						// []	Loop through current gallery, fetching media ID and store to array
+					$current_gallery = get_field('gallery', $attraction_id);									// []	Get current gallery items
+					foreach ($current_gallery as $image) { $current_ids_only[] = $image['id']; }				// []	Loop through current gallery, fetching media ID and store to array
 
-					$new_media_ids = array_unique(array_merge($current_ids_only, $media_ids));							// []	Make sure the selected image isn't already in the gallery
-					foreach ($new_media_ids as $id) { $gallery_asset_ids[] = intval($id); }								// []	Build new array of media IDs
-					update_field('gallery', $gallery_asset_ids, $attraction_id);										// []	Update field
+					$new_media_ids = array_unique(array_merge($current_ids_only, $media_ids));					// []	Make sure the selected image isn't already in the gallery
+					foreach ($new_media_ids as $id) { $gallery_asset_ids[] = intval($id); }						// []	Build new array of media IDs
+					update_field('gallery', $gallery_asset_ids, $attraction_id);								// []	Update field
 					break;
 			endswitch;
 
