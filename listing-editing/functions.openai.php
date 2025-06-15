@@ -58,13 +58,14 @@ function scenic_handle_ajax_scenic_openai_location_subtitle() {
 		$open_ai = new Orhanerday\OpenAi\OpenAi($openai_key);														// []
 
 
-		$location_id = intval($_REQUEST['locationID']);
-		$location_object = get_term_by('term_id', $location_id, 'route__locations');
-		$location_name = (get_field('expressive-title', 'route__locations_' . $location_object->term_id)) ?: $location_object->name;
+		$place_term_id = intval($_REQUEST['locationID']);
+		$place_post_id = get_field('related-place-to-visit', 'route__locations_' . $place_term_id);
+
+		$location_name = get_the_title($place_post_id->ID);
 
 
 		$json_response = $open_ai->chat([
-			'model' 			=> 'gpt-4o-mini',
+			'model' 			=> 'gpt-4o',
 			'messages' 			=> array(
 				array(
 					'role'	  => 'user',
@@ -117,16 +118,15 @@ function scenic_handle_ajax_scenic_openai_location_content() {
 		$open_ai = new Orhanerday\OpenAi\OpenAi($openai_key);														// []
 
 
-		$location_id = intval($_REQUEST['locationID']);
-		$location_object = get_term_by('term_id', $location_id, 'route__locations');
-		$location_name = (get_field('expressive-title', 'route__locations_' . $location_object->term_id)) ?: $location_object->name;
+		$place_term_id = intval($_REQUEST['locationID']);
+		$place_post_id = get_field('related-place-to-visit', 'route__locations_' . $place_term_id);
 
-
+		$location_name = get_the_title($place_post_id->ID);
 		$length = intval($_REQUEST['contentLength']);
 
 
 		$json_response = $open_ai->chat([
-			'model' 			=> 'gpt-4o-mini',
+			'model' 			=> 'gpt-4o',
 			'messages' 			=> array(
 				array(
 					'role'	  => 'user',
@@ -194,7 +194,7 @@ function scenic_handle_ajax_scenic_openai_route_socials() {
 
 
 		$json_response = $open_ai->chat([
-			'model' 			=> 'gpt-4o-mini',
+			'model' 			=> 'gpt-4o',
 			'messages' 			=> array(
 				array(
 					'role'	  => 'user',

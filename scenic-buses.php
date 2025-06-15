@@ -59,6 +59,7 @@
 	 */
 
 	require_once $plugin_path . 'post-types/mangopear.post-type.routes.php'; 				// [a]
+	require_once $plugin_path . 'post-types/mangopear.post-type.destinations.php'; 			// [a]
 	require_once $plugin_path . 'post-types/mangopear.post-type.attractions.php'; 			// [a]
 	require_once $plugin_path . 'post-types/mangopear.post-type.reviews.php'; 				// [a]
 	require_once $plugin_path . 'post-types/scenic.post-type.travelogues.php'; 				// [a]
