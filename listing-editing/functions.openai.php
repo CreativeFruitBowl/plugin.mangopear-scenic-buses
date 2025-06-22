@@ -61,7 +61,7 @@ function scenic_handle_ajax_scenic_openai_location_subtitle() {
 		$place_term_id = intval($_REQUEST['locationID']);
 		$place_post_id = get_field('related-place-to-visit', 'route__locations_' . $place_term_id);
 
-		$location_name = get_the_title($place_post_id->ID);
+		$location_name = get_the_title($place_term_id);
 
 
 		$json_response = $open_ai->chat([
@@ -69,7 +69,7 @@ function scenic_handle_ajax_scenic_openai_location_subtitle() {
 			'messages' 			=> array(
 				array(
 					'role'	  => 'user',
-					'content' => "Write a 15 to 22 word long headline for $location_name, based on tourism by bus, all in British English and sentence case. Make it very creative. No quote marks around the text.",
+					'content' => "Write a 15 to 22 word long headline for $location_name, based on tourism by public transport (bus, coach and train etc), all in British English and sentence case. Make it very creative. No quote marks around the text.",
 				),
 			),
 			'n'					=> 3,
@@ -86,6 +86,8 @@ function scenic_handle_ajax_scenic_openai_location_subtitle() {
 		wp_send_json_success(																						// []
 			array(																									// []
 				'result'	=> $response,																			// []
+				'place'		=> $place_term_id,
+				'place-name' => $location_name,
 			),																										// []
 			200																										// []
 		);																											// []
@@ -121,8 +123,19 @@ function scenic_handle_ajax_scenic_openai_location_content() {
 		$place_term_id = intval($_REQUEST['locationID']);
 		$place_post_id = get_field('related-place-to-visit', 'route__locations_' . $place_term_id);
 
-		$location_name = get_the_title($place_post_id->ID);
+		$location_name = get_the_title($place_term_id);
 		$length = intval($_REQUEST['contentLength']);
+
+
+		$prompt  = "You are writing engaging, tourism-focused content for the website scenicbuses.co.uk. Your task is to generate a headline and a short feature about a city, town, village, or attraction – in this case, $location_name.";
+		$prompt .= "The audience is made up of travellers exploring Britain without a car. Write in a friendly, natural tone – not overly formal or promotional. Avoid repeating generic phrases like 'public transport options' or 'sustainable travel'.";
+		$prompt .= "Instead, refer more casually to actual journeys or routes: arriving by train, catching the bus into the hills, hopping off in town, etc. Mention the experience of travelling without a car as part of the trip, not as a selling point.";
+		$prompt .= "Highlight attractions, scenic views, nearby countryside and charming local spots that are easy to reach. If possible, name specific routes or stations.";
+		$prompt .= "Use short paragraphs and write clearly. Always write in British English with correct grammar. The headline should be between 15 and 22 words long and written in sentence case – capitalise only the first word and proper nouns. Wrap the headline in:";
+		$prompt .= "<h3 class=\"js-ai-content__heading\">...</h3>";
+		$prompt .= "Wrap all paragraph content in:";
+		$prompt .= "<div class=\"js-ai-content__body\"><p>...</p><p>...</p></div>";
+		$prompt .= "Only return the final HTML output – no preamble, explanations or quotes. Write creatively and with a clear tourism focus, suitable for the Scenic website. The body content should be approximately $length words long.";
 
 
 		$json_response = $open_ai->chat([
@@ -130,12 +143,12 @@ function scenic_handle_ajax_scenic_openai_location_content() {
 			'messages' 			=> array(
 				array(
 					'role'	  => 'user',
-					'content' => "Write a $length word long description for $location_name, based on tourism by bus, all in British English, sentence case and short paragraphs, formatted as simple HTML. Add a 15 to 22 word long headline, all in British English and sentence case. Make it very creative. No quote marks around the text. Wrap the headline in a <h3> with class 'js-ai-content__heading'. No line breaks characters between paragraphs, but wrap them in <p>. Wrap all the <p> elements (but not the <h3>) in a <div> with class 'js-ai-content__body'.",
+					'content' => $prompt,
 				),
 			),
 			'n'					=> 3,
 			'temperature' 		=> 0.9,
-			'max_tokens' 		=> 275,
+			'max_tokens' 		=> 1000,
 			'frequency_penalty' => 0,
 			'presence_penalty' 	=> 0.6,
 		]);
@@ -147,7 +160,9 @@ function scenic_handle_ajax_scenic_openai_location_content() {
 		wp_send_json_success(																						// []
 			array(																									// []
 				'result'	=> $response,																			// []
-				'length'	=> $length,
+				'length'	=> $length . ' words',
+				'place'		=> $place_term_id,
+				'place-name' => $location_name,
 			),																										// []
 			200																										// []
 		);																											// []

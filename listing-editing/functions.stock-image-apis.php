@@ -318,7 +318,7 @@ function scenic_handle_ajax_scenic_stock_api_add_to_library() {
 
 	if (isset($_REQUEST)) :																							// [ii]
 		$request_type 		 = $_REQUEST['type'];																	// []
-		$location_id 		 = intval($_REQUEST['locationID']);														// []
+		$place_post_id 		 = intval($_REQUEST['locationID']);														// []
 		$attraction_id 		 = intval($_REQUEST['attractionID']);													// []
 
 		$image_source        = $_REQUEST['imageSource'];															// []
@@ -374,14 +374,16 @@ function scenic_handle_ajax_scenic_stock_api_add_to_library() {
 			$gallery_asset_ids = array();																		// []	New empty array for creating ACF field data
 			$media_ids         = array($attachment_id);															// []	Cast to array
 
+			$place_term_id     = get_field('related-location', $place_post_id)->term_id;						// []	Fetch term ID from post meta
+
 			switch ($request_type) :
 				case "addToLocation" :
-					$current_gallery = get_field('gallery', $location_id);										// []	Get current gallery items
+					$current_gallery = get_field('gallery', $place_post_id);									// []	Get current gallery items
 					foreach ($current_gallery as $image) { $current_ids_only[] = $image['id']; }				// []	Loop through current gallery, fetching media ID and store to array
 
 					$new_media_ids = array_unique(array_merge($current_ids_only, $media_ids));					// []	Make sure the selected image isn't already in the gallery
 					foreach ($new_media_ids as $id) { $gallery_asset_ids[] = intval($id); }						// []	Build new array of media IDs
-					update_field('gallery', $gallery_asset_ids, $location_id);									// []	Update field
+					update_field('gallery', $gallery_asset_ids, $place_post_id);								// []	Update field
 					break;
 
 
@@ -397,14 +399,14 @@ function scenic_handle_ajax_scenic_stock_api_add_to_library() {
 
 
 
-			update_field('field_639da280c74b8', $location_id, $attachment_id);		// Add location ID to media meta
+			update_field('field_639da280c74b8', $place_term_id, $attachment_id);								// []	Add location ID to media meta
 		endif;																									// []
 	endif;																										// []
 
 
 	wp_send_json_success(array(
 		'attachment_id' => $attachment_id,
-		'location_id'	=> $location_id,
+		'location_id'	=> $place_post_id,
 		'locations'		=> $locations,
 	), 200);
 }
