@@ -129,8 +129,8 @@ function scenic_handle_ajax_scenic_openai_location_content() {
 
 		$prompt  = "You are writing engaging, tourism-focused content for the website scenicbuses.co.uk. Your task is to generate a headline and a short feature about a city, town, village, or attraction – in this case, $location_name.";
 		$prompt .= "The audience is made up of travellers exploring Britain without a car. Write in a friendly, natural tone – not overly formal or promotional. Avoid repeating generic phrases like 'public transport options' or 'sustainable travel'.";
-		$prompt .= "Instead, refer more casually to actual journeys or routes: arriving by train, catching the bus into the hills, hopping off in town, etc. Mention the experience of travelling without a car as part of the trip, not as a selling point.";
-		$prompt .= "Highlight attractions, scenic views, nearby countryside and charming local spots that are easy to reach. If possible, name specific routes or stations.";
+		$prompt .= "Mention the experience of travelling without a car as part of the trip, not as a selling point.";
+		$prompt .= "Highlight attractions, scenic views, nearby countryside and charming local spots that are easy to reach.";
 		$prompt .= "Use short paragraphs and write clearly. Always write in British English with correct grammar. The headline should be between 15 and 22 words long and written in sentence case – capitalise only the first word and proper nouns. Wrap the headline in:";
 		$prompt .= "<h3 class=\"js-ai-content__heading\">...</h3>";
 		$prompt .= "Wrap all paragraph content in:";
