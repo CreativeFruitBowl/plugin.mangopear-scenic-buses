@@ -116,16 +116,11 @@ function scenic_handle_ajax_scenic_openai_location_content() {
 		wp_send_json_error('There was no data sent with your request. Please try again.', 500);						// [ii]
 		exit;																										// [ii]
 	else :																											// [ii]
-		$openai_key = scenic_load_openai_client();																	// []
-		$open_ai = new Orhanerday\OpenAi\OpenAi($openai_key);														// []
-
-
 		$place_term_id = intval($_REQUEST['locationID']);
 		$place_post_id = get_field('related-place-to-visit', 'route__locations_' . $place_term_id);
 
 		$location_name = get_the_title($place_term_id);
 		$length = intval($_REQUEST['contentLength']);
-
 
 		$prompt  = "You are writing engaging, tourism-focused content for the website scenicbuses.co.uk. Your task is to generate a headline and a short feature about a city, town, village, or attraction – in this case, $location_name.";
 		$prompt .= "The audience is made up of travellers exploring Britain without a car. Write in a friendly, natural tone – not overly formal or promotional. Avoid repeating generic phrases like 'public transport options' or 'sustainable travel'.";
@@ -135,7 +130,43 @@ function scenic_handle_ajax_scenic_openai_location_content() {
 		$prompt .= "<h3 class=\"js-ai-content__heading\">...</h3>";
 		$prompt .= "Wrap all paragraph content in:";
 		$prompt .= "<div class=\"js-ai-content__body\"><p>...</p><p>...</p></div>";
-		$prompt .= "Only return the final HTML output – no preamble, explanations or quotes. Write creatively and with a clear tourism focus, suitable for the Scenic website. The body content should be approximately $length words long.";
+		$prompt .= "Only return the final HTML output (without ```html) – no preamble, explanations, quotes or other markup. Write creatively and with a clear tourism focus, suitable for the Scenic website. The body content should be approximately $length words long.";
+
+
+//		use Gemini\Enums\ModelVariation;
+//		use Gemini\GeminiHelper;
+//		use Gemini;
+
+
+		$api_key = SCENIC_GEMINI_API_KEY;
+		$client = Gemini::client($api_key);
+
+
+		$result = $client->generativeModel(model: 'gemini-2.0-flash')->generateContent($prompt);
+//		$result->text(); // Hello! How can I assist you today?
+
+
+		wp_send_json_success(																						// []
+			array(																									// []
+				'engine'	=> 'gemini',																			// []
+				'result'	=> $result,																				// []
+				'length'	=> $length . ' words',																	// []
+				'place'		=> $place_term_id,																		// []
+				'place-name' => $location_name,																		// []
+			),																										// []
+			200																										// []
+		);																											// []
+
+
+
+
+
+
+
+
+	/*
+		$openai_key = scenic_load_openai_client();																	// []
+		$open_ai = new Orhanerday\OpenAi\OpenAi($openai_key);														// []
 
 
 		$json_response = $open_ai->chat([
@@ -166,6 +197,7 @@ function scenic_handle_ajax_scenic_openai_location_content() {
 			),																										// []
 			200																										// []
 		);																											// []
+	*/
 	endif;																											// [ii]
 }
 
