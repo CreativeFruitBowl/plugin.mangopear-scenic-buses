@@ -219,6 +219,99 @@ function scenic_stock_api_search_pixabay($client, $search, $page, $args) {
 
 
 /**
+ * [2]	Perform image search on Pixabay
+ *
+ * 		@since 11.0.0
+ *
+ * 		[i]		Store our Pixabay API key and URL
+ * 		[ii]	Define params for search query
+ * 		[iii]	Perform the actual query using the oAuth2 Client
+ * 		[iv]	If our API request is a success or failure
+ * 		[v]		Return error message and error state
+ * 		[vi]	Create new empty array for pushing our images to
+ * 		[viii]	Loop through all returned images, pushing to our array
+ * 		[ix]	Set "Pixabay" as the source of the image
+ * 		[x]		Fetch alt and description
+ * 		[xi]	Fetch ID of Pixabay asset and its popularity
+ * 		[xii]	Fetch useful media URLs
+ * 		[xiii]	Fetch media files
+ * 		[xiv]	Set user who uploaded's name to Pixabay
+ * 		[xv]	Return our images plus other useful data
+ */
+
+function scenic_stock_api_search_shutterstock($client, $search, $page, $args) {
+	$shutterstock_access = get_option('shutterstock_option_name')['app_token'];
+	$client->setAccessToken($shutterstock_access);
+	$client->setAccessTokenType(1);
+
+	$http_headers = array();
+	$http_headers['user-agent'] = 'Scenic';
+
+	$shutterstock_url = 'https://api.shutterstock.com/v2/images/search';											// [i]
+
+	$query__term  = urlencode($search);																				// [ii]
+	$query__page  = ($page) ?: 1;																					// [ii]
+
+	$response = $client->fetch(																						// [iii]
+		$shutterstock_url . '?query=' . $query__term . '&page=' . $query__page . '&per_page=30&spellcheck_query=false&region=GB&image_type=photo',				// [iii]
+		$args,																										// [iii]
+		'GET',																										// [iii]
+		$http_headers
+	);																												// [iii]
+
+
+
+	if ($response['code'] == 200) :																					// [iv]
+		$all_images = array();																						// [vii]
+
+
+		foreach ($response['result']['data'] as $image) :																		// [viii]
+			$all_images[] = array(																					// [viii]
+				'source'		=> 'shutterstock',																		// [ix]
+				'fee'			=> '$10',																			// [ix]
+				'alt'			=> '',																				// [x]
+				'description'	=> $image['description'],																	// [x]
+				'id'			=> $image['id'],																	// [xi]
+				'score'			=> 5000,																	// [xi]
+				'urls'	=> array(																					// [xii]
+					'download'		=> $image['assets']['preview']['url'],														// [xii]
+					'library'		=> $image['url'],															// [xii]
+					'raw'			=> $image['assets']['preview']['url'],														// [xiii]
+					'full'			=> $image['assets']['preview']['url'],														// [xiii]
+					'medium'		=> $image['assets']['preview']['url'],														// [xiii]
+					'small'			=> $image['assets']['preview']['url'],														// [xiii]
+					'thumb'			=> $image['assets']['preview']['url'],														// [xiii]
+				),																									// [xii]
+				'name'			=> 'shutterstock',																		// [xiv]
+			);																										// [viii]
+		endforeach;																									// [viii]
+
+		return array(																								// [xv]
+			'images' 	=> $all_images,																				// [xv]
+			'response' 	=> $response,																				// [xv]
+			'page'		=> $query__page,																			// [xv]
+			'totals'	=> array(																					// [xv]
+				'found'		=> $response['result']['total_count'],													// [xv]
+				'returned'	=> count($response['result']['data']),													// [xv]
+			),																										// [xv]
+			'status' 	=> 200,																						// [xv]
+		);																											// [xv]
+
+
+
+	else :																											// [iv]
+		return array(																								// [v]
+			'response' 	=> $response,																				// [v]
+			'status' 	=> 500,																						// [v]
+		);																											// [v]
+	endif;																											// [iv]
+}
+
+
+
+
+
+/**
  * [6]	AJAX request handler for search requests
  */
 
@@ -268,6 +361,17 @@ function scenic_handle_ajax_scenic_stock_api_search() {
 
 			$found_total    = $found_total    + $pixabay['totals']['found'];										// []
 			$returned_total = $returned_total + $pixabay['totals']['returned'];										// []
+		}																											// []
+
+
+		if (in_array('shutterstock', $networks)) {																	// []
+			$shutterstock = scenic_stock_api_search_shutterstock($client, $search, $page, $args);						// []
+
+			$images = array_merge($images, $shutterstock['images']);														// []
+			$return['shutterstock'] = $shutterstock;																			// []
+
+			$found_total    = $found_total    + $shutterstock['totals']['found'];										// []
+			$returned_total = $returned_total + $shutterstock['totals']['returned'];										// []
 		}																											// []
 
 
