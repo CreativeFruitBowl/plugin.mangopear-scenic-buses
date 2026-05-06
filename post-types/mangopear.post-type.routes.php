@@ -161,10 +161,12 @@
 				'query_var'                  => 'route__locations',
 				'rewrite'                    => $rewrite,
 				'show_in_rest'				 => true,
+				'rest_base'             	 => 'scenic-location-term',
+				'rest_controller_class'		 => 'WP_REST_Terms_Controller',
 			);
 
 
-			register_taxonomy('route__locations', array('routes'), $args);
+			register_taxonomy('route__locations', array('routes', 'destinations', 'attractions', 'travelogues', 'service_updates'), $args);
 		}
 
 
