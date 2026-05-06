@@ -111,4 +111,30 @@
 		add_action('init', 'scenic_register_type_destinations', 0);
 	}
 
+
+
+
+
+	/**
+	 * Give custom pagination URLs
+	 * 
+	 * Default ones don't work as we're not pagination the destination posts, but routes instead!
+	 */
+
+	// Register the query var
+	add_filter('query_vars', function($vars) {
+	    $vars[] = 'routes_page';
+	    return $vars;
+	});
+
+
+	// Add rewrite rule — put this after your CPT registration
+	add_action('init', function() {
+	    add_rewrite_rule(
+	        '^destinations/(.+?)/view/([0-9]+)/?$',
+	        'index.php?destinations=$matches[1]&routes_page=$matches[2]',
+	        'top'
+	    );
+	}, 10);
+
 ?>
